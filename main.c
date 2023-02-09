@@ -104,7 +104,7 @@ int main(int argc, char *argv[])
                                 //game(window->sdl_window,window->renderer,keyPressed);
                                 //displayImg(window->sdl_window, window->renderer, "img/menu-2.png", 0, 0);
                                 
-                                test(window->sdl_window, window->renderer,keyPressed,program_launched);
+                                game(window->sdl_window, window->renderer,keyPressed,&program_launched);
 
                             }
                         continue;

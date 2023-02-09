@@ -28,7 +28,7 @@ void SDL_ExitWithError(char* message);
 void TTF_ExitWithError(char* message);
 void SDL_DestroyAndExit(SDL_Renderer *renderer, SDL_Window *window , char* message);
 void TTF_DestroyAndExit(SDL_Renderer *renderer, SDL_Window *window , char* message);
-void game(SDL_Window *window, SDL_Renderer *renderer, char keyPressed);
+
 char Norme(char keyPressed);
 int CompareChar(char c1,char c2);
 int CompareChaine(char chaine1[],char chaine2[]);
@@ -37,8 +37,9 @@ void InitialChaine(char chaine[],char c,int nb);
 int LettreUtilise(char c,char chaine[]);
 void PlacerCar(char,char[]);
 
-void test(SDL_Window *window, SDL_Renderer *renderer, char keyPressed, SDL_bool status);
-char proposition();
+void game(SDL_Window *window, SDL_Renderer *renderer, char keyPressed, SDL_bool *program_launched);
+char proposition(SDL_bool *program_launched);
 
 void displayPendu(SDL_Window *window, SDL_Renderer *renderer, int nbErreur);
-void getMousePosition(int *mouse_x, int *mouse_y);
+//void getMousePosition(int *mouse_x, int *mouse_y);
+

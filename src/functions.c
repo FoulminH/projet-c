@@ -233,156 +233,6 @@ void PlacerCar(char c,char chaine[]){
 
 ////////////////////////////////////////////////////////////
 
-void game(SDL_Window *window, SDL_Renderer *renderer, char keyPressed){
-    FILE* fichier = NULL;
-	srand(time(NULL));
-	char motSecret[15]={0};
-	char motActuel[15]={0};
-	char lettre;
-	int tentative = 10;
-    char* char_tentative = malloc(sizeof(char));
-    char_tentative = "10";
-
-	//choix difficulté
-
-	/*printf("Choix difficulté :\n");
-	printf("1 - facile\n");
-	printf("2 - moyen\n");
-	printf("3 - difficile\n");
-	printf("Mon choix (1, 2 ou 3): ");
-
-	char level = '4';
-	
-
-	while (level=='4'){
-		level = getchar();
-		
-		if (level=='1'){
-			tentative = 15;
-		}
-		if (level=='2'){
-			tentative = 10;
-		}
-		if (level=='3'){
-			tentative = 5;
-		}
-		else {
-			printf("Erreur choisir 1, 2 ou 3 : ");
-		}
-		//printf("%d et %d",level, tentative);
-		printf("%d \n", tentative);
-	} 
-*/
-
-	//nb lettre a propser
-	char lettreProposer[tentative+1];
-
-	// Gneration d'un mot
-	GenMot(fichier,motSecret);
-
-		if (strlen(motSecret) > 0) {
-			InitialChaine(lettreProposer,'0',tentative+1);
-			InitialChaine(motActuel,'*',strlen(motSecret));
-			//printf("Le mot a trouver : %s \nTentatives : %d\n",motActuel,tentative );
-            displayTxt(window, renderer,"font/absender1.ttf",200, motActuel, 200,200);
-            displayTxt(window, renderer,"font/absender1.ttf",50, "Tentatives : ", 200,300);
-            displayTxt(window, renderer,"font/absender1.ttf",50, char_tentative, 200,400);
-
-			do {
-				//printf("Donnez une lettre : \n");
-				lettre = toupper(keyPressed);
-				
-				//printf("%c \n", lettre);
-				// Si la lettre comprise entre A et Z
-				if ( !(lettre < 'A') || (lettre > 'Z')) {
-					
-					// Si la lettre n'est pas le mot actuel et n'a pas été proposée
-					if (!LettreUtilise(lettre,motActuel) && !LettreUtilise(lettre,lettreProposer)){
-						
-                        // Si la lettre est dans le mot
-						if (LettreUtilise(lettre,motSecret)) {
-						//printf("la lettre existe !\n");
-                            int i = 0;
-                                
-                                do {
-                                    if (CompareChar(lettre,motSecret[i])) motActuel[i] = motSecret[i];
-                                    i++;
-                                } while(motSecret[i] != '\0');
-                                //printf("%s\n",motActuel);
-                                
-                                
-                                displayTxt(window, renderer,"font/absender1.ttf",100, motActuel, 100,100);
-
-						} else {
-							tentative--;
-							//printf("La lettre n'est pas dans le mot \nMot a trouver : %s\nTentative restante : %d\n",motActuel,tentative);
-                            //Dessiner le pendu
-							PlacerCar(lettre,lettreProposer);
-						}
-
-					} else {
-						//printf("Déjà proposé\n");
-					}
-
-				} else {
-					//printf("Ce n'est pas une lettre\nMot a trouver : %s\nTentatives restantes : %d\n",motActuel,tentative);
-				}
-
-			}while ((!CompareChaine(motActuel,motSecret)) && (tentative != 0));
-
-			if (tentative == 0) {
-
-				//printf("Perdu\n");
-				//printf("Le bon mot est : %s\n",motSecret);
-			}
-
-			else{
-				//printf("Gagné\n");
-				//printf("Avec encore %d tentative e stock\n",tentative);
-			}
-
-		}
-
-		//si il n'y a pas de mot trouvé
-		else{
-			//printf("Liste de mots introuvable !\n");
-		}
-
-
-
-}
-
-char proposition()
-{
-    SDL_Event event;
-    char choix ;
-    while(1)
-    {
-        SDL_WaitEvent(&event);
-        switch(event.type)
-        {
-
-            case SDL_QUIT:
-                exit(EXIT_FAILURE);
-                break;
-
-            case SDL_KEYDOWN:
-                switch (event.key.keysym.sym){
-                    case SDLK_ESCAPE:
-                        //FAIRE QUITTER LE PROG
-                    break;
-
-                    default:
-                    choix = event.key.keysym.sym;
-                    return choix;
-                }
-
-        }
-    }
-
-}
-
-
 
 void displayPendu(SDL_Window *window, SDL_Renderer *renderer, int tentative){
     int rect_x = 800;
@@ -418,7 +268,48 @@ void displayPendu(SDL_Window *window, SDL_Renderer *renderer, int tentative){
 
 }
 
-void test(SDL_Window *window, SDL_Renderer *renderer, char keyPressed, SDL_bool program_launched){
+void quit_game(SDL_bool *program_launched){
+    *program_launched = SDL_FALSE;
+}
+
+
+char proposition(SDL_bool *program_launched)
+{
+    SDL_Event event;
+    char choix ;
+    while(1)
+    {
+        SDL_WaitEvent(&event);
+        switch(event.type)
+        {
+
+            case SDL_QUIT:
+                exit(EXIT_FAILURE);
+                break;
+
+            case SDL_KEYDOWN:
+                switch (event.key.keysym.sym){
+                    case SDLK_ESCAPE:
+                        //FAIRE QUITTER LE PROG
+                        //*program_launched = SDL_FALSE;
+                        quit_game(program_launched);
+                    break;
+
+                    default:
+                    choix = event.key.keysym.sym;
+                    return choix;
+                }
+
+            case SDL_MOUSEMOTION:
+                
+
+        }
+    }
+
+}
+
+
+void game(SDL_Window *window, SDL_Renderer *renderer, char keyPressed, SDL_bool *program_launched){
     FILE* fichier = NULL;
 	srand(time(NULL));
 	char motSecret[15]={0};
@@ -426,7 +317,37 @@ void test(SDL_Window *window, SDL_Renderer *renderer, char keyPressed, SDL_bool 
 	char lettre;
 	int tentative = 7;
     char* char_tentative = malloc(sizeof(char));
-    char_tentative = "10";
+    char_tentative;
+    SDL_itoa(tentative, char_tentative, 10);
+
+    //choix difficulté
+
+	/*printf("Choix difficulté :\n");
+	printf("1 - facile\n");
+	printf("2 - moyen\n");
+	printf("3 - difficile\n");
+	printf("Mon choix (1, 2 ou 3): ");
+	char level = '4';
+	
+	while (level=='4'){
+		level = getchar();
+		
+		if (level=='1'){
+			tentative = 15;
+		}
+		if (level=='2'){
+			tentative = 10;
+		}
+		if (level=='3'){
+			tentative = 5;
+		}
+		else {
+			printf("Erreur choisir 1, 2 ou 3 : ");
+		}
+		//printf("%d et %d",level, tentative);
+		printf("%d \n", tentative);
+	} 
+*/
 
 	char lettreProposer[tentative+1];
 	GenMot(fichier,motSecret);
@@ -436,13 +357,19 @@ void test(SDL_Window *window, SDL_Renderer *renderer, char keyPressed, SDL_bool 
 			//printf("Le mot a trouver : %s \nTentatives : %d\n",motActuel,tentative );
             SDL_RenderClear(renderer);
             displayImg(window, renderer, "img/menu-2.png", 0, 0);
+            displayTxt(window, renderer,"font/absender1.ttf",50, "Tentatives : ", 50,50);
+            displayTxt(window, renderer,"font/absender1.ttf",50, char_tentative, 350,50);
             displayTxt(window, renderer,"font/absender1.ttf",150, motActuel, 400,200);
             printf("%s\n",motActuel);
             printf("%s\n",motSecret);
             
     do {
 				//printf("Donnez une lettre : \n");
-				lettre = toupper(proposition());
+				lettre = toupper(proposition(program_launched));
+                /*if(lettre == '\b'){
+                    printf("QUIT\n");
+                    quit_game(program_launched);
+                }*/
 				printf("%c \n", lettre);
 				//printf("%c \n", lettre);
 				// Si la lettre comprise entre A et Z
@@ -463,12 +390,20 @@ void test(SDL_Window *window, SDL_Renderer *renderer, char keyPressed, SDL_bool 
                                 //printf("%s\n",motActuel);
                                 
                                 SDL_RenderClear(renderer);
-                                displayImg(window,renderer,"img/menu-2.png",0,0);  
+                                displayImg(window,renderer,"img/menu-2.png",0,0);                     
+                                displayTxt(window, renderer,"font/absender1.ttf",50, "Tentatives : ", 50,50);
+                                displayTxt(window, renderer,"font/absender1.ttf",50, char_tentative, 350,50); 
                                 displayTxt(window, renderer,"font/absender1.ttf",150, motActuel, 400,200);
                                 displayPendu(window, renderer, tentative);
 
 						} else {
 							tentative--;
+                            SDL_itoa(tentative, char_tentative, 10);
+                            SDL_RenderClear(renderer);
+                            displayImg(window,renderer,"img/menu-2.png",0,0);                     
+                            displayTxt(window, renderer,"font/absender1.ttf",50, "Tentatives : ", 50,50);
+                            displayTxt(window, renderer,"font/absender1.ttf",50, char_tentative, 350,50); 
+                            displayTxt(window, renderer,"font/absender1.ttf",150, motActuel, 400,200);
                             displayPendu(window, renderer, tentative);
 							//printf("La lettre n'est pas dans le mot \nMot a trouver : %s\nTentative restante : %d\n",motActuel,tentative);
                             //Dessiner le pendu
@@ -480,10 +415,6 @@ void test(SDL_Window *window, SDL_Renderer *renderer, char keyPressed, SDL_bool 
 					}
 
 				} else {
-                    if(lettre == '§'){
-                        printf("QUIT PROGRAM");
-                    }
-                    
 					//printf("Ce n'est pas une lettre\nMot a trouver : %s\nTentatives restantes : %d\n",motActuel,tentative);
 				}
 
