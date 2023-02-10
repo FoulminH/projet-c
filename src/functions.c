@@ -268,6 +268,13 @@ void displayPendu(SDL_Window *window, SDL_Renderer *renderer, int tentative){
 
 }
 
+void menu(SDL_Window *window, SDL_Renderer *renderer, char keyPressed, SDL_bool *program_launched){
+    SDL_RenderClear(renderer);
+    displayImg(window, renderer, "img/main-menu.png", 0, 0);
+
+
+}
+
 void quit_game(SDL_bool *program_launched){
     *program_launched = SDL_FALSE;
 }
@@ -300,7 +307,7 @@ char proposition(SDL_bool *program_launched)
                     return choix;
                 }
 
-            case SDL_MOUSEMOTION:
+            //case SDL_MOUSEMOTION:
                 
 
         }
@@ -317,7 +324,6 @@ void game(SDL_Window *window, SDL_Renderer *renderer, char keyPressed, SDL_bool 
 	char lettre;
 	int tentative = 7;
     char* char_tentative = malloc(sizeof(char));
-    char_tentative;
     SDL_itoa(tentative, char_tentative, 10);
 
     //choix difficulté
