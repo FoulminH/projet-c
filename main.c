@@ -31,9 +31,6 @@ int main(int argc, char *argv[])
     SDL_StartTextInput();
     char* textInput = malloc(sizeof(char)*100);
     textInput[0] = '\0';
-    char* composition = malloc(sizeof(char));
-    Sint32 cursor;
-    Sint32 selection_len;
     char* pseudo = malloc(sizeof(char)*100);
 
     //début du programme
@@ -95,24 +92,22 @@ int main(int argc, char *argv[])
                 
                 break;
                 case SDL_TEXTINPUT:
+                if(askPseudo){
+                if(textInput[0] == ' '){
+                    textInput[0] = '\0';
+                }
                     strcat(textInput, event.text.text);
                     displayTxt(window->sdl_window, window->renderer,"font/absender1.ttf", 50, textInput, 100, 50);
                     printf("text input: %s\n", textInput);
-                    
+                }
                 break;
-                case SDL_TEXTEDITING:
-                    composition = event.edit.text;
-                    //displayTxt(window->sdl_window, window->renderer,"font/absender1.ttf", 50, composition, 100, 80);
-                    cursor = event.edit.start;
-                    selection_len = event.edit.length;
-                    break;
                 case SDL_KEYDOWN:
                     switch (event.key.keysym.sym)
                     {
                         case SDLK_RETURN:
                             if(inMenu){
                                 pseudo = textInput;
-                                printf("pseudo: %s\n", pseudo);
+                                printf("pseudo:%s\n", pseudo);
                             }
                             continue;
                         case SDLK_BACKSPACE:
@@ -124,6 +119,9 @@ int main(int argc, char *argv[])
 
                             }else{
                                 textInput[0] = ' ';
+                                SDL_RenderClear(window->renderer);
+                                displayImg(window->sdl_window, window->renderer, "img/main-menu.png", 0, 0);
+                                displayTxt(window->sdl_window, window->renderer,"font/absender1.ttf", 50, textInput, 100, 50);
                             }
                             displayTxt(window->sdl_window, window->renderer,"font/absender1.ttf", 50, textInput, 100, 50);
                             printf("text input: %s\n", textInput);
