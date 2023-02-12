@@ -19,6 +19,8 @@
 #define INT_TENTATIVE_Y 50
 #define ACTUAL_WORD_X 400
 #define ACTUAL_WORD_Y 200
+#define PSEUDO_X 450
+#define PSEUDO_Y 340
 
 
 typedef struct {

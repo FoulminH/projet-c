@@ -17,8 +17,10 @@ int main(int argc, char *argv[])
     SDL_bool isMouseOnQuit = SDL_FALSE;
     SDL_bool isMouseOnPlay = SDL_FALSE;
     SDL_bool inGame = SDL_FALSE;
-    SDL_bool inMenu = SDL_TRUE;
+    SDL_bool inMenu = SDL_FALSE;
+    SDL_bool askPseudo = SDL_FALSE;
     SDL_Event event;
+    //int* score = malloc(sizeof(int));
 
     //lancement SDL
     if(SDL_Init(SDL_INIT_VIDEO) != 0) // Initialisation de la SDL & gestion des erreurs
@@ -37,7 +39,8 @@ int main(int argc, char *argv[])
 
     //début du programme
     
-    displayImg(window->sdl_window,window->renderer, "img/main-menu.png",0,0);                         
+    displayImg(window->sdl_window,window->renderer, "img/askPseudo.png",0,0);
+    askPseudo = SDL_TRUE;                         
     while(program_launched){
         SDL_WaitEvent(&event);
        
@@ -46,9 +49,8 @@ int main(int argc, char *argv[])
                 case SDL_MOUSEMOTION:
                     SDL_GetMouseState(&mouse_x,&mouse_y);
                     //check la positino de la souris pour créer l'effet hover
-                    if(!inGame){
+                    if(!inGame && !askPseudo){
                         if(mouse_x > 355 && mouse_x < 750 && mouse_y > 302 && mouse_y < 358){
-                            
                             isMouseOnPlay = SDL_TRUE;
                         }else{
                             isMouseOnPlay = SDL_FALSE;
@@ -56,7 +58,7 @@ int main(int argc, char *argv[])
                     }
                     
                     //Bouton QUITTER
-                    if(!inGame){
+                    if(!inGame && !askPseudo){
                         if(mouse_x > 357 && mouse_x < 755 && mouse_y > 378 && mouse_y < 437){
                             
                             isMouseOnQuit = SDL_TRUE;
@@ -80,12 +82,12 @@ int main(int argc, char *argv[])
                             program_launched = SDL_FALSE;
                         }
 
-                        if(isMouseOnPlay && !inGame){
+                        if(isMouseOnPlay && !inGame && !askPseudo){
                             inGame = SDL_TRUE;
                             inMenu = SDL_FALSE;
                             displayImg(window->sdl_window, window->renderer, "img/menu-2.png", 0, 0);
                             displayTxt(window->sdl_window, window->renderer,"font/absender1.ttf",50, "Bienvenue dans le jeu du pendu !", 100,300);
-                            displayTxt(window->sdl_window, window->renderer,"font/absender1.ttf",50, "Appuyez sur une touche pour commencer", 100,350);
+                            displayTxt(window->sdl_window, window->renderer,"font/absender1.ttf",50, "Appuyez sur une touche pour commencer", 100,370);
                             printf("in game\n");
                             }
                         break;
@@ -94,60 +96,62 @@ int main(int argc, char *argv[])
                 
                 break;
                 case SDL_TEXTINPUT:
-                //if(askPseudo){
-                if(textInput[0] == ' '){
-                    textInput[0] = '\0';
-                }
-                    strcat(textInput, event.text.text);
-                    displayTxt(window->sdl_window, window->renderer,"font/absender1.ttf", 50, textInput, 100, 50);
-                    printf("text input: %s\n", textInput);
-               // }
+                if(askPseudo){
+                    if(textInput[0] == ' '){
+                        textInput[0] = '\0';
+                    }
+                        strcat(textInput, event.text.text);
+                        displayTxt(window->sdl_window, window->renderer,"font/absender1.ttf", 50, textInput, PSEUDO_X, PSEUDO_Y);
+                        printf("text input: %s\n", textInput);
+               }
                 break;
                 case SDL_KEYDOWN:
                     switch (event.key.keysym.sym)
-                    {
+                    {   
                         case SDLK_RETURN:
-                            if(inMenu){
+                        
+                            if(askPseudo){
                                 pseudo = textInput;
                                 printf("pseudo:%s\n", pseudo);
+                                askPseudo = SDL_FALSE;
+                                inMenu = SDL_TRUE;
+                                menu(window->sdl_window, window->renderer,keyPressed,&program_launched);
                             }
                             continue;
                         case SDLK_BACKSPACE:
-                            if(textInput[0] != ' '){
-                                if(strlen(textInput) > 1){
-                                    textInput[strlen(textInput)-1] = '\0';
-                                    SDL_RenderClear(window->renderer);
-                                    displayImg(window->sdl_window, window->renderer, "img/main-menu.png", 0, 0);
-                                    displayTxt(window->sdl_window, window->renderer,"font/absender1.ttf", 50, textInput, 100, 50);
+                            if(askPseudo){    
+                                if(textInput[0] != ' '){
+                                    if(strlen(textInput) > 1){
+                                        textInput[strlen(textInput)-1] = '\0';
+                                        SDL_RenderClear(window->renderer);
+                                        displayImg(window->sdl_window, window->renderer, "img/askPseudo.png", 0, 0);
+                                        displayTxt(window->sdl_window, window->renderer,"font/absender1.ttf", 50, textInput, PSEUDO_X, PSEUDO_Y);
 
-                                }else{
-                                    textInput[0] = ' ';
-                                    SDL_RenderClear(window->renderer);
-                                    displayImg(window->sdl_window, window->renderer, "img/main-menu.png", 0, 0);
-                                    displayTxt(window->sdl_window, window->renderer,"font/absender1.ttf", 50, textInput, 100, 50);
+                                    }else{
+                                        textInput[0] = ' ';
+                                        SDL_RenderClear(window->renderer);
+                                        displayImg(window->sdl_window, window->renderer, "img/askPseudo.png", 0, 0);
+                                        displayTxt(window->sdl_window, window->renderer,"font/absender1.ttf", 50, textInput, PSEUDO_X, PSEUDO_Y);
+                                    }
                                 }
                             }
                         continue;
                         case SDLK_ESCAPE:
-                         program_launched = SDL_FALSE;
+                            program_launched = SDL_FALSE;
                         break;
                         default:
-                            //keyPressed = event.key.keysym.sym;
-                            //printf("You have pressed %c\n", keyPressed);
-                            //displayTxt(window,renderer,"font/absender1.ttf", keyPressed);
                             if(inGame){
                                 printf("in game\n");
                                 keyPressed = event.key.keysym.sym;
                                 keyPressed = toupper(keyPressed);
                                 printf("You have pressed %c\n", keyPressed);
-                                game(window->sdl_window, window->renderer,keyPressed,&program_launched);
+                                game(window->sdl_window, window->renderer,keyPressed,&inGame);
 
                             }
                             if(inMenu){
                                 printf("in menu\n");
                                 keyPressed = event.key.keysym.sym;
                                 keyPressed = toupper(keyPressed);
-                                printf("You have pressed %c\n", keyPressed);
                                 menu(window->sdl_window, window->renderer,keyPressed,&program_launched);
 
                             }
@@ -174,7 +178,9 @@ int main(int argc, char *argv[])
             
         }
     //}
-    free(textInput);
+    //free(score);
+    //free(textInput);
+    free(pseudo);
     SDL_StopTextInput();
     destroy_window(window);
     TTF_Quit();

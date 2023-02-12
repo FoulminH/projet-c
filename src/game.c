@@ -141,7 +141,7 @@ void quit_game(SDL_bool *program_launched){
     *program_launched = SDL_FALSE;
 }
 
-char proposition(SDL_bool *program_launched)
+char proposition(SDL_bool *inGame)
 {
     SDL_Event event;
     char choix ;
@@ -159,8 +159,7 @@ char proposition(SDL_bool *program_launched)
                 switch (event.key.keysym.sym){
                     case SDLK_ESCAPE:
                         //FAIRE QUITTER LE PROG
-                        //*program_launched = SDL_FALSE;
-                        quit_game(program_launched);
+                        *inGame = SDL_FALSE;
                     break;
 
                     default:
@@ -177,7 +176,7 @@ char proposition(SDL_bool *program_launched)
 }
 
 
-void game(SDL_Window *window, SDL_Renderer *renderer, char keyPressed, SDL_bool *program_launched){
+void game(SDL_Window *window, SDL_Renderer *renderer, char keyPressed, SDL_bool *inGame){
     FILE* fichier = NULL;
 	srand(time(NULL));
 	char motSecret[15]={0};
@@ -232,7 +231,7 @@ void game(SDL_Window *window, SDL_Renderer *renderer, char keyPressed, SDL_bool 
             
     do {
 				//printf("Donnez une lettre : \n");
-				lettre = toupper(proposition(program_launched));
+				lettre = toupper(proposition(inGame));
                 /*if(lettre == '\b'){
                     printf("QUIT\n");
                     quit_game(program_launched);
@@ -291,6 +290,8 @@ void game(SDL_Window *window, SDL_Renderer *renderer, char keyPressed, SDL_bool 
                 SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0xFF);
                 SDL_RenderClear(renderer);
                 displayTxt(window, renderer,"font/absender1.ttf",WORD_SIZE, "Perdu !", ACTUAL_WORD_X,ACTUAL_WORD_Y);
+                displayTxt(window, renderer,"font/absender1.ttf",WORD_SIZE-50, "Le mot etait :", ACTUAL_WORD_X-100,ACTUAL_WORD_Y+110);
+                displayTxt(window, renderer,"font/absender1.ttf",WORD_SIZE, motSecret, ACTUAL_WORD_X,ACTUAL_WORD_Y+200);
 
 				//printf("Perdu\n");
 				//printf("Le bon mot est : %s\n",motSecret);
