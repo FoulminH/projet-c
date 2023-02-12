@@ -13,6 +13,13 @@
 #define WORD_X 500
 #define WORD_Y 300
 #define WORD_SIZE 150
+#define TENTATIVE_SIZE 50
+#define TXT_TENTATIVE_X 50
+#define TXT_TENTATIVE_Y 50
+#define INT_TENTATIVE_X 350
+#define INT_TENTATIVE_Y 50
+#define ACTUAL_WORD_X 400
+#define ACTUAL_WORD_Y 200
 
 typedef struct {
     SDL_Window *sdl_window;

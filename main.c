@@ -2,7 +2,9 @@
 #include <SDL2/SDL_image.h>*/
 #include <stdio.h>
 #include <stdlib.h>
-#include "includes/functions.h"
+//#include "includes/functions.h"
+//#include "includes/window.h"
+#include "includes/game.h"
 
 int main(int argc, char *argv[])
 {
@@ -92,14 +94,14 @@ int main(int argc, char *argv[])
                 
                 break;
                 case SDL_TEXTINPUT:
-                if(askPseudo){
+                //if(askPseudo){
                 if(textInput[0] == ' '){
                     textInput[0] = '\0';
                 }
                     strcat(textInput, event.text.text);
                     displayTxt(window->sdl_window, window->renderer,"font/absender1.ttf", 50, textInput, 100, 50);
                     printf("text input: %s\n", textInput);
-                }
+               // }
                 break;
                 case SDL_KEYDOWN:
                     switch (event.key.keysym.sym)
@@ -111,21 +113,20 @@ int main(int argc, char *argv[])
                             }
                             continue;
                         case SDLK_BACKSPACE:
-                            if(strlen(textInput) > 1){
-                                textInput[strlen(textInput)-1] = '\0';
-                                SDL_RenderClear(window->renderer);
-                                displayImg(window->sdl_window, window->renderer, "img/main-menu.png", 0, 0);
-                                displayTxt(window->sdl_window, window->renderer,"font/absender1.ttf", 50, textInput, 100, 50);
+                            if(textInput[0] != ' '){
+                                if(strlen(textInput) > 1){
+                                    textInput[strlen(textInput)-1] = '\0';
+                                    SDL_RenderClear(window->renderer);
+                                    displayImg(window->sdl_window, window->renderer, "img/main-menu.png", 0, 0);
+                                    displayTxt(window->sdl_window, window->renderer,"font/absender1.ttf", 50, textInput, 100, 50);
 
-                            }else{
-                                textInput[0] = ' ';
-                                SDL_RenderClear(window->renderer);
-                                displayImg(window->sdl_window, window->renderer, "img/main-menu.png", 0, 0);
-                                displayTxt(window->sdl_window, window->renderer,"font/absender1.ttf", 50, textInput, 100, 50);
+                                }else{
+                                    textInput[0] = ' ';
+                                    SDL_RenderClear(window->renderer);
+                                    displayImg(window->sdl_window, window->renderer, "img/main-menu.png", 0, 0);
+                                    displayTxt(window->sdl_window, window->renderer,"font/absender1.ttf", 50, textInput, 100, 50);
+                                }
                             }
-                            displayTxt(window->sdl_window, window->renderer,"font/absender1.ttf", 50, textInput, 100, 50);
-                            printf("text input: %s\n", textInput);
-                        printf("clear\n");
                         continue;
                         case SDLK_ESCAPE:
                          program_launched = SDL_FALSE;
