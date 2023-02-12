@@ -95,13 +95,7 @@ int LettreUtilise(char c,char chaine[]){
   
 }
 
-//ajouter une lettre a la fin
-void PlacerCar(char c,char chaine[]){
-  int i;
-    for (i=0; chaine[i] != '0' ;i++){
-      chaine[i] = c;
-    }
-}
+
 
 void displayPendu(SDL_Window *window, SDL_Renderer *renderer, int tentative){
     int rect_x = 800;
@@ -176,6 +170,75 @@ char proposition(SDL_bool *inGame)
 }
 
 
+//liste chainée
+
+typedef struct Node Node;
+struct Node
+{
+    char value;
+    Node *next;
+};
+
+void add_to_end(Node *n, int value)
+{
+    // naviguer vers la fin de la liste
+    while (n->next)
+    {
+        n = n->next;
+    }
+
+    // y allouer un nouveau node
+    n->next = malloc(sizeof(Node));
+    n->next->next = NULL;
+    // donner une valeur au nouveau node
+    n->next->value = value;
+}
+
+Node *search_value(Node *n, int value)
+{
+    // naviguer vers le premier noeud qui a la valeur recherchée
+    while (n->value != value && n->next)
+    {
+        n = n->next;
+    }
+
+    // verifier qu'il a été trouvé
+    if (n->value == value)
+    {
+        // si le noeud est trouvé, le retourner
+        return n;
+    }
+    else
+    {
+        // si le noeud est pas trouvé, renvoyer un pointeur NULL
+        return NULL;
+    }
+}
+
+void display(Node *list)
+{
+    // boucler sur tous les noeuds de la liste
+    while (list)
+    {
+        // afficher le noeud courrant
+        printf(" %d /", list->value);
+        list = list->next;
+    }
+}
+
+void free_list(Node *n)
+{
+    while (n)
+    {
+        Node *temp = n;
+        n = n->next;
+
+        free(temp);
+    }
+}
+
+
+
 void game(SDL_Window *window, SDL_Renderer *renderer, char keyPressed, SDL_bool *inGame){
     FILE* fichier = NULL;
 	srand(time(NULL));
@@ -186,39 +249,15 @@ void game(SDL_Window *window, SDL_Renderer *renderer, char keyPressed, SDL_bool 
     char* char_tentative = malloc(sizeof(char));
     SDL_itoa(tentative, char_tentative, 10);
 
-    //choix difficulté
-
-	/*printf("Choix difficulté :\n");
-	printf("1 - facile\n");
-	printf("2 - moyen\n");
-	printf("3 - difficile\n");
-	printf("Mon choix (1, 2 ou 3): ");
-	char level = '4';
-	
-	while (level=='4'){
-		level = getchar();
-		
-		if (level=='1'){
-			tentative = 15;
-		}
-		if (level=='2'){
-			tentative = 10;
-		}
-		if (level=='3'){
-			tentative = 5;
-		}
-		else {
-			printf("Erreur choisir 1, 2 ou 3 : ");
-		}
-		//printf("%d et %d",level, tentative);
-		printf("%d \n", tentative);
-	} 
-*/
-
-	char lettreProposer[tentative+1];
+    // Generation d'un mot
 	GenMot(fichier,motSecret);
     if (strlen(motSecret) > 0) {
-			InitialChaine(lettreProposer,'0',tentative+1);
+
+        //Liste chainée pour stocker le code ASCII des lettre proposées
+        Node *list = malloc(sizeof(Node));
+			list->value = 0;
+			list->next = NULL; 
+
 			InitialChaine(motActuel,'*',strlen(motSecret));
 			//printf("Le mot a trouver : %s \nTentatives : %d\n",motActuel,tentative );
             SDL_RenderClear(renderer);
@@ -242,7 +281,7 @@ void game(SDL_Window *window, SDL_Renderer *renderer, char keyPressed, SDL_bool 
 				if ( !(lettre < 'A') || (lettre > 'Z')) {
 					
 					// Si la lettre n'est pas le mot actuel et n'a pas été proposée
-					if (!LettreUtilise(lettre,motActuel) && !LettreUtilise(lettre,lettreProposer)){
+					if (!LettreUtilise(lettre,motActuel) && search_value(list,lettre)==0){
 						
                         // Si la lettre est dans le mot
 						if (LettreUtilise(lettre,motSecret)) {
@@ -273,7 +312,7 @@ void game(SDL_Window *window, SDL_Renderer *renderer, char keyPressed, SDL_bool 
                             displayPendu(window, renderer, tentative);
 							//printf("La lettre n'est pas dans le mot \nMot a trouver : %s\nTentative restante : %d\n",motActuel,tentative);
                             //Dessiner le pendu
-							PlacerCar(lettre,lettreProposer);
+							add_to_end(list,lettre);
 						}
 
 					} else {
@@ -305,6 +344,7 @@ void game(SDL_Window *window, SDL_Renderer *renderer, char keyPressed, SDL_bool 
 				//printf("Gagné\n");
 				//printf("Avec encore %d tentative e stock\n",tentative);
 			}
+            free_list(list);
 
 		}
 
@@ -316,3 +356,5 @@ void game(SDL_Window *window, SDL_Renderer *renderer, char keyPressed, SDL_bool 
 
 
 }
+
+
