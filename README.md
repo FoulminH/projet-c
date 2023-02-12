@@ -1,4 +1,4 @@
 # TO DO:
-#       - ajouter niveaux de difficulté
-#       - entré utilisateur pour ajouter mot et entrer pseudo
-#       - mettre les listes chainées
+#       - afficher les lettres utilisées
+#       - ajouter un mot directement via l'appli
+#       - faire un toupper ou tolower sur le pseudo
