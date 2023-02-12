@@ -2,8 +2,15 @@
 
 int tentative;
 
+typedef struct Node Node;
+struct Node
+{
+    int value;
+    Node *next;
+};
 
 int main(int argc, char const *argv[]) {
+	
 	printf("Menu Pendu\n");
 	FILE* fichier = NULL;
 	srand(time(NULL));
@@ -44,12 +51,18 @@ int main(int argc, char const *argv[]) {
 */
 
 	//nb lettre a propser
-	char lettreProposer[tentative+1];
+	//char lettreProposer[tentative+1];
 
 	// Gneration d'un mot
 	GenMot(fichier,motSecret);
 		if (strlen(motSecret) > 0) {
-			InitialChaine(lettreProposer,'0',tentative+1);
+
+			//Liste chainée pour stocker le code ASCII des lettre proposées
+			Node *list = malloc(sizeof(Node));
+			list->value = 0;
+			list->next = NULL; 
+			
+			//création de la chaine secrete
 			InitialChaine(motActuel,'*',strlen(motSecret));
 			printf("Le mot a trouver : %s \nTentatives : %d\n",motActuel,tentative );
 
@@ -57,15 +70,20 @@ int main(int argc, char const *argv[]) {
 				printf("Donnez une lettre : \n");
 				lettre = Norme();
 				
-				printf("%c \n", lettre);
+				//printf("%c \n", lettre);
+
+				//printf("%d\n", search_value(list,lettre));
+
 				// Si la lettre comprise entre A et Z
 				if ( !(lettre < 'A') || (lettre > 'Z')) {
 					
-					// Si la lettre n'est pas le mot actuel et n'a pas été proposée
-					if (!LettreUtilise(lettre,motActuel) && !LettreUtilise(lettre,lettreProposer)){
+					// Si la lettre n'est pas encore dans le mot actuel et n'a pas encore été proposée
+					if (!LettreUtilise(lettre,motActuel) && search_value(list,lettre)==0){
 						
+						// si la lettre nest dans le mot actuel
 						if (LettreUtilise(lettre,motSecret)) {
 						printf("la lettre existe !\n");
+						
 						int i = 0;
 							
 							do {
@@ -74,10 +92,12 @@ int main(int argc, char const *argv[]) {
 							} while(motSecret[i] != '\0');
 							printf("%s\n",motActuel);
 
+						// Sinon la mettre dans la liste chainé de stockage des lettres proposé
 						} else {
 							tentative--;
 							printf("La lettre n'est pas dans le mot \nMot a trouver : %s\nTentative restante : %d\n",motActuel,tentative);
-							PlacerCar(lettre,lettreProposer);
+							add_to_end(list,lettre);
+							//display(list);
 						}
 
 					} else {
@@ -88,7 +108,7 @@ int main(int argc, char const *argv[]) {
 					printf("Ce n'est pas une lettre\nMot a trouver : %s\nTentatives restantes : %d\n",motActuel,tentative);
 				}
 
-			}while ((!CompareChaine(motActuel,motSecret)) && (tentative != 0));
+			} while ((!CompareChaine(motActuel,motSecret)) && (tentative != 0));
 
 			if (tentative == 0) {
 
@@ -98,8 +118,10 @@ int main(int argc, char const *argv[]) {
 
 			else{
 				printf("Gagné\n");
-				printf("Avec encore %d tentative e stock\n",tentative);
+				printf("Avec encore %d tentatives en stock\n",tentative);
 			}
+
+			free_list(list);
 
 		}
 

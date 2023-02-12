@@ -70,7 +70,7 @@ void  GenMot(FILE *fichier,char chaine[]){
     }
 }
 
-//initialise une chaine avec x fois le caractere c
+//initialise une chaine avec nb fois le caractere c
 void InitialChaine(char chaine[],char c,int nb){
     int i = 0;
     while (i < nb)
@@ -103,3 +103,71 @@ void PlacerCar(char c,char chaine[]){
     }
 }
 
+//----------------------------------------------------
+// LISTE CHAINÉE
+//----------------------------------------------------
+
+typedef struct Node Node;
+struct Node
+{
+    char value;
+    Node *next;
+};
+
+void add_to_end(Node *n, int value)
+{
+    // naviguer vers la fin de la liste
+    while (n->next)
+    {
+        n = n->next;
+    }
+
+    // y allouer un nouveau node
+    n->next = malloc(sizeof(Node));
+    n->next->next = NULL;
+    // donner une valeur au nouveau node
+    n->next->value = value;
+}
+
+Node *search_value(Node *n, int value)
+{
+    // naviguer vers le premier noeud qui a la valeur recherchée
+    while (n->value != value && n->next)
+    {
+        n = n->next;
+    }
+
+    // verifier qu'il a été trouvé
+    if (n->value == value)
+    {
+        // si le noeud est trouvé, le retourner
+        return n;
+    }
+    else
+    {
+        // si le noeud est pas trouvé, renvoyer un pointeur NULL
+        return NULL;
+    }
+}
+
+void display(Node *list)
+{
+    // boucler sur tous les noeuds de la liste
+    while (list)
+    {
+        // afficher le noeud courrant
+        printf(" %d /", list->value);
+        list = list->next;
+    }
+}
+
+void free_list(Node *n)
+{
+    while (n)
+    {
+        Node *temp = n;
+        n = n->next;
+
+        free(temp);
+    }
+}
