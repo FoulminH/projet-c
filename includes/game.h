@@ -8,14 +8,16 @@
 #include <ctype.h>
 #include "window.h"
 
+char* strToLower(char* str1, char* str2);
 char Norme(char keyPressed);
 int CompareChar(char c1,char c2);
 int CompareChaine(char chaine1[],char chaine2[]);
 void GenMot(FILE *fichier,char chaine[]);
 void InitialChaine(char chaine[],char c,int nb);
 int LettreUtilise(char c,char chaine[]);
-void game(SDL_Window *window, SDL_Renderer *renderer, char keyPressed, SDL_bool *program_launched);
-char proposition(SDL_bool *program_launched);
+void quit_game(SDL_bool *inGame, SDL_bool *inMenu);
+void game(SDL_Window *window, SDL_Renderer *renderer, char keyPressed, SDL_bool *inGame, SDL_bool *inMenu);
+char proposition(SDL_bool *inGame, SDL_bool *inMenu, int tentative);
 void displayPendu(SDL_Window *window, SDL_Renderer *renderer, int nbErreur);
 //liste chainée
 typedef struct Node Node;

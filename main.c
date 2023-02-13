@@ -38,27 +38,31 @@ int main(int argc, char *argv[])
     char* pseudo = malloc(sizeof(char)*100);
 
     //début du programme
-    
     displayImg(window->sdl_window,window->renderer, "img/askPseudo.png",0,0);
     askPseudo = SDL_TRUE;                         
     while(program_launched){
         SDL_WaitEvent(&event);
-       
-        //while(SDL_PollEvent(&event)){
+            if(inMenu){ //si on est dans le menu
+                menu(window->sdl_window, window->renderer,keyPressed,&program_launched);
+            }else if(inGame){ //si on est dans le jeu
+                game(window->sdl_window, window->renderer,keyPressed,&inGame,&inMenu);
+            }
+            //while(SDL_PollEvent(&event)){
             switch(event.type){
+                //obtenir la position de la souris
                 case SDL_MOUSEMOTION:
                     SDL_GetMouseState(&mouse_x,&mouse_y);
-                    //check la positino de la souris pour créer l'effet hover
-                    if(!inGame && !askPseudo){
+                    //position de la souris pour les boutons
+                    //Bouton JOUER
+                    if(inMenu){
                         if(mouse_x > 355 && mouse_x < 750 && mouse_y > 302 && mouse_y < 358){
                             isMouseOnPlay = SDL_TRUE;
                         }else{
                             isMouseOnPlay = SDL_FALSE;
                         }
                     }
-                    
                     //Bouton QUITTER
-                    if(!inGame && !askPseudo){
+                    if(inMenu){
                         if(mouse_x > 357 && mouse_x < 755 && mouse_y > 378 && mouse_y < 437){
                             
                             isMouseOnQuit = SDL_TRUE;
@@ -66,36 +70,39 @@ int main(int argc, char *argv[])
                             isMouseOnQuit = SDL_FALSE;
                         }
                     }else{
+                        //Croix pour quitter
                         if(mouse_x > 1100 && mouse_x < 1140 && mouse_y > 0 && mouse_y < 40){
                             
                             isMouseOnQuit = SDL_TRUE;
                     }
                     }
                     break;
+                //Clic de la souris
                 case SDL_MOUSEBUTTONDOWN:
                     switch (event.button.button)
                     {
+                    //clique gauche
                     case SDL_BUTTON_LEFT:
-                        
-                        
-                        if(isMouseOnQuit){
+                        if(isMouseOnQuit){ // Si bouton quitter
+                            inMenu = SDL_FALSE;
                             program_launched = SDL_FALSE;
                         }
-
-                        if(isMouseOnPlay && !inGame && !askPseudo){
-                            inGame = SDL_TRUE;
+                        if(isMouseOnPlay && !inGame && !askPseudo){ // Si bouton jouer
                             inMenu = SDL_FALSE;
-                            displayImg(window->sdl_window, window->renderer, "img/menu-2.png", 0, 0);
+                            inGame = SDL_TRUE;
+                            /*displayImg(window->sdl_window, window->renderer, "img/menu-2.png", 0, 0);
                             displayTxt(window->sdl_window, window->renderer,"font/absender1.ttf",50, "Bienvenue dans le jeu du pendu !", 100,300);
                             displayTxt(window->sdl_window, window->renderer,"font/absender1.ttf",50, "Appuyez sur une touche pour commencer", 100,370);
+                            */
                             printf("in game\n");
+                            
                             }
                         break;
                     
                     }
                 
                 break;
-                case SDL_TEXTINPUT:
+                case SDL_TEXTINPUT: //pour taper du texte directement
                 if(askPseudo){
                     if(textInput[0] == ' '){
                         textInput[0] = '\0';
@@ -105,20 +112,21 @@ int main(int argc, char *argv[])
                         printf("text input: %s\n", textInput);
                }
                 break;
-                case SDL_KEYDOWN:
+                case SDL_KEYDOWN: // pour les touches du clavier
                     switch (event.key.keysym.sym)
                     {   
-                        case SDLK_RETURN:
+                        case SDLK_RETURN: //touche entrer
                         
                             if(askPseudo){
                                 pseudo = textInput;
+                                strToLower(textInput, pseudo); //mettre le pseudo en minuscule
                                 printf("pseudo:%s\n", pseudo);
                                 askPseudo = SDL_FALSE;
                                 inMenu = SDL_TRUE;
                                 menu(window->sdl_window, window->renderer,keyPressed,&program_launched);
                             }
                             continue;
-                        case SDLK_BACKSPACE:
+                        case SDLK_BACKSPACE: //touche effacer
                             if(askPseudo){    
                                 if(textInput[0] != ' '){
                                     if(strlen(textInput) > 1){
@@ -136,8 +144,14 @@ int main(int argc, char *argv[])
                                 }
                             }
                         continue;
-                        case SDLK_ESCAPE:
-                            program_launched = SDL_FALSE;
+                        case SDLK_ESCAPE: //touche echap
+                            if(inMenu){
+                                inMenu = SDL_FALSE;
+                                program_launched = SDL_FALSE;
+                            }else if(inGame){
+                                inMenu = SDL_TRUE;
+                                inGame = SDL_FALSE;
+                            }
                         break;
                         default:
                             if(inGame){
@@ -145,20 +159,20 @@ int main(int argc, char *argv[])
                                 keyPressed = event.key.keysym.sym;
                                 keyPressed = toupper(keyPressed);
                                 printf("You have pressed %c\n", keyPressed);
-                                game(window->sdl_window, window->renderer,keyPressed,&inGame);
+                                //game(window->sdl_window, window->renderer,keyPressed,&inGame, &inMenu);
 
                             }
                             if(inMenu){
                                 printf("in menu\n");
                                 keyPressed = event.key.keysym.sym;
                                 keyPressed = toupper(keyPressed);
-                                menu(window->sdl_window, window->renderer,keyPressed,&program_launched);
+                                //menu(window->sdl_window, window->renderer,keyPressed,&program_launched);
 
                             }
                         continue;
                         }
          
-                case SDL_QUIT:
+                case SDL_QUIT:  //Si on clique sur la croix quitter
                     program_launched = SDL_FALSE;
                     break;
 
