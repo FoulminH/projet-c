@@ -205,6 +205,8 @@ void add_to_end(Node *n, int value)
     n->next->value = value;
 }
 
+
+
 Node *search_value(Node *n, int value)
 {
     // naviguer vers le premier noeud qui a la valeur recherchée
@@ -232,9 +234,26 @@ void display(Node *list)
     while (list)
     {
         // afficher le noeud courrant
-        printf(" %d /", list->value);
+        printf(" %d \n", list->value);
         list = list->next;
     }
+}
+
+void display_used_letter(Node *list, SDL_Window *window, SDL_Renderer *renderer)
+{
+    //char* char_used_letter = malloc(sizeof(char));
+    int c = 0;
+    // boucler sur tous les noeuds de la liste
+    int i = 0;
+    while (list)
+    {
+        
+        // afficher le noeud courrant
+        c = list->value;
+        list = list->next;
+        i++;
+    }
+    printf("%c\n", c);
 }
 
 void free_list(Node *n)
@@ -330,7 +349,8 @@ void game(SDL_Window *window, SDL_Renderer *renderer, char keyPressed, SDL_bool 
 
 					} else {
 						displayTxt(window, renderer,"font/absender1.ttf",TENTATIVE_SIZE, "Lettre deja proposee !", TXT_TENTATIVE_X,TXT_TENTATIVE_Y+50);
-                        display(list);
+                        //display(list);
+                        display_used_letter(list, window, renderer);
 					}
 
 				} else {
