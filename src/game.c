@@ -7,6 +7,13 @@ char* strToLower(char* str1, char* str2){
     return str2;
 }
 
+char* strToUpper(char* str1, char* str2){
+    for (int i = 0; str1[i] != '\0'; i++) {
+        str2[i] = toupper(str1[i]);
+    }
+    return str2;
+}
+
 
 //normaliser les lettre entrée
 char Norme(char keyPressed){
@@ -433,6 +440,98 @@ void game(SDL_Window *window, SDL_Renderer *renderer, char keyPressed, SDL_bool 
     
 
 
+}
+
+void addWordList(char* word) {
+    //oubre le fichier en mode append pour ajouter des mots à la fin
+    FILE* file = fopen("word.txt", "a");
+
+    // vérfiei si l'ouverture du fichier a réussi
+    if (file == NULL) {
+        printf("Erreur : impossible d'ouvrir le fichier\n");
+        return;
+    }
+
+    //écrit le mot dans le fichier suivi d'un saut de ligne
+    fprintf(file, "%s\n", word);
+
+    //on le fichier
+    fclose(file);
+}
+
+
+void addWordMenu(SDL_Window *window, SDL_Renderer *renderer,SDL_bool *addWord,SDL_bool *inMenu){
+    SDL_bool adding = SDL_TRUE;
+    SDL_Event event;
+    int MAX_INPUT = 30;
+    char* textInput = malloc(sizeof(char)*MAX_INPUT);
+    textInput[0] = '\0';
+    int i = 0;
+    char* word = malloc(sizeof(char)*MAX_INPUT);
+    word[0] = '\0';
+    SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+    SDL_RenderClear(renderer);
+    displayImg(window, renderer, "img/addWord.png", 0, 0);
+    while (adding)
+    {
+        SDL_WaitEvent(&event);
+        
+        
+            switch(event.type){
+                case SDL_TEXTINPUT: //pour taper du texte directement
+                        if(textInput[0] == ' '){
+                            textInput[0] = '\0';
+                        }
+                            strcat(textInput, event.text.text);
+                            displayTxt(window, renderer,"font/absender1.ttf", 50, textInput, PSEUDO_X, PSEUDO_Y);
+                            printf("text input: %s\n", textInput);
+                
+                break;
+                case SDL_KEYDOWN: // pour les touches du clavier
+                switch (event.key.keysym.sym)
+                {   
+                    case SDLK_ESCAPE:
+                        printf("escape\n");
+                        adding = SDL_FALSE;
+                        *addWord = SDL_FALSE;
+                        *inMenu = SDL_TRUE;
+                    break;
+                    case SDLK_BACKSPACE: //touche effacer
+                            if(textInput[0] != ' '){
+                                if(strlen(textInput) > 1){
+                                    textInput[strlen(textInput)-1] = '\0';
+                                    SDL_RenderClear(renderer);
+                                    displayImg(window, renderer, "img/addWord.png", 0, 0);
+                                    displayTxt(window, renderer,"font/absender1.ttf", 50, textInput, PSEUDO_X, PSEUDO_Y);
+
+                                }else{
+                                    textInput[0] = ' ';
+                                    SDL_RenderClear(renderer);
+                                    displayImg(window, renderer, "img/addWord.png", 0, 0);
+                                    displayTxt(window, renderer,"font/absender1.ttf", 50, textInput, PSEUDO_X, PSEUDO_Y);
+                                }
+                            }
+                        
+                    continue;
+                    case SDLK_RETURN:
+                        word = textInput;
+                        printf("return\n");
+                        adding = SDL_FALSE;
+                        *addWord = SDL_FALSE;
+                        *inMenu = SDL_TRUE;
+                        addWordList(strToUpper(textInput, word));
+                        free(word);
+                    break;
+                    default:
+                        /*word[i] = event.key.keysym.sym;
+                        i++;
+                        printf("%s\n",word);*/
+                    break;
+                }
+
+                }
+    
+    }
 }
 
 

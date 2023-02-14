@@ -16,8 +16,10 @@ int main(int argc, char *argv[])
     int mouse_x, mouse_y;
     SDL_bool isMouseOnQuit = SDL_FALSE;
     SDL_bool isMouseOnPlay = SDL_FALSE;
+    SDL_bool isMouseOnAdd = SDL_FALSE;
     SDL_bool inGame = SDL_FALSE;
     SDL_bool inMenu = SDL_FALSE;
+    SDL_bool addWord = SDL_FALSE;
     SDL_bool askPseudo = SDL_FALSE;
     SDL_Event event;
     //int* score = malloc(sizeof(int));
@@ -33,9 +35,9 @@ int main(int argc, char *argv[])
     }
     // pour taper du texte directement
     SDL_StartTextInput();
-    char* textInput = malloc(sizeof(char)*100);
+    char* textInput = malloc(sizeof(char)*30);
     textInput[0] = '\0';
-    char* pseudo = malloc(sizeof(char)*100);
+    char* pseudo = malloc(sizeof(char)*30);
 
     //début du programme
     displayImg(window->sdl_window,window->renderer, "img/askPseudo.png",0,0);
@@ -46,6 +48,8 @@ int main(int argc, char *argv[])
                 menu(window->sdl_window, window->renderer,keyPressed,&program_launched);
             }else if(inGame){ //si on est dans le jeu
                 game(window->sdl_window, window->renderer,keyPressed,&inGame,&inMenu);
+            }else if(addWord){ //si on est dans l'ajout de mot
+                addWordMenu(window->sdl_window, window->renderer,&addWord,&inMenu);
             }
             //while(SDL_PollEvent(&event)){
             switch(event.type){
@@ -64,17 +68,17 @@ int main(int argc, char *argv[])
                     //Bouton QUITTER
                     if(inMenu){
                         if(mouse_x > 357 && mouse_x < 755 && mouse_y > 378 && mouse_y < 437){
-                            
                             isMouseOnQuit = SDL_TRUE;
                         }else{
                             isMouseOnQuit = SDL_FALSE;
                         }
-                    }else{
-                        //Croix pour quitter
-                        if(mouse_x > 1100 && mouse_x < 1140 && mouse_y > 0 && mouse_y < 40){
-                            
-                            isMouseOnQuit = SDL_TRUE;
                     }
+                    if(inMenu){
+                        if(mouse_x > 357 && mouse_x < 755 && mouse_y > 455 && mouse_y < 510){
+                            isMouseOnAdd = SDL_TRUE;
+                        }else{
+                            isMouseOnAdd = SDL_FALSE;
+                        }
                     }
                     break;
                 //Clic de la souris
@@ -89,13 +93,12 @@ int main(int argc, char *argv[])
                         }
                         if(isMouseOnPlay && !inGame && !askPseudo){ // Si bouton jouer
                             inMenu = SDL_FALSE;
-                            inGame = SDL_TRUE;
-                            /*displayImg(window->sdl_window, window->renderer, "img/menu-2.png", 0, 0);
-                            displayTxt(window->sdl_window, window->renderer,"font/absender1.ttf",50, "Bienvenue dans le jeu du pendu !", 100,300);
-                            displayTxt(window->sdl_window, window->renderer,"font/absender1.ttf",50, "Appuyez sur une touche pour commencer", 100,370);
-                            */
-                            printf("in game\n");
-                            
+                            inGame = SDL_TRUE;                            
+                            }
+                        if(isMouseOnAdd && !inGame && !askPseudo){ // Si bouton ajouter
+                            inMenu = SDL_FALSE;
+                            inGame = SDL_FALSE;
+                            addWord = SDL_TRUE;                                
                             }
                         break;
                     

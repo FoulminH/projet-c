@@ -9,6 +9,7 @@
 #include "window.h"
 
 char* strToLower(char* str1, char* str2);
+char* strToUpper(char* str1, char* str2);
 char Norme(char keyPressed);
 int CompareChar(char c1,char c2);
 int CompareChaine(char chaine1[],char chaine2[]);
@@ -25,3 +26,5 @@ void add_to_end(Node *n, int value);
 Node *search_value(Node *n, int value);
 void display(Node *list);
 void free_list(Node *n);
+
+void addWordMenu(SDL_Window *window, SDL_Renderer *renderer,SDL_bool *addWord,SDL_bool *inMenu);

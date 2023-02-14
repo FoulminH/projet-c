@@ -125,5 +125,5 @@ void TTF_DestroyAndExit(SDL_Renderer *renderer, SDL_Window *window , char* messa
 
 void menu(SDL_Window *window, SDL_Renderer *renderer, char keyPressed, SDL_bool *program_launched){
     SDL_RenderClear(renderer);
-    displayImg(window, renderer, "img/main-menu.png", 0, 0);
+    displayImg(window, renderer, "img/main-menu-2.png", 0, 0);
 }
