@@ -17,9 +17,9 @@ void GenMot(FILE *fichier,char chaine[]);
 void InitialChaine(char chaine[],char c,int nb);
 int LettreUtilise(char c,char chaine[]);
 void quit_game(SDL_bool *inGame, SDL_bool *inMenu);
-void game(SDL_Window *window, SDL_Renderer *renderer, char keyPressed, SDL_bool *inGame, SDL_bool *inMenu);
+void game(SDL_Window *window, SDL_Renderer *renderer, char keyPressed, SDL_bool *inGame, SDL_bool *inMenu, int *played, int *won, int *lose);
 char proposition(SDL_bool *inGame, SDL_bool *inMenu, int tentative);
-void displayPendu(SDL_Window *window, SDL_Renderer *renderer, int nbErreur);
+void displayPendu(SDL_Window *window, SDL_Renderer *renderer, int tentative);
 //liste chainée
 typedef struct Node Node;
 void add_to_end(Node *n, int value);

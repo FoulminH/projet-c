@@ -149,7 +149,7 @@ void displayPendu(SDL_Window *window, SDL_Renderer *renderer, int tentative){
 void quit_game(SDL_bool *inGame, SDL_bool *inMenu){
     *inGame = SDL_FALSE;
     *inMenu = SDL_TRUE;
-    printf("Vous avez quitter le jeu\n");
+    printf("Vous avez quitté le jeu\n");
 }
 
 char proposition(SDL_bool *inGame, SDL_bool *inMenu, int tentative)
@@ -170,8 +170,8 @@ char proposition(SDL_bool *inGame, SDL_bool *inMenu, int tentative)
                 switch (event.key.keysym.sym){
                     case SDLK_ESCAPE:
                         //FAIRE QUITTER LE PROG
-                        tentative = 0;
-                        quit_game(inGame, inMenu);
+                        tentative = -1;
+                        //quit_game(inGame, inMenu);
                     break;
 
                     default:
@@ -245,7 +245,7 @@ void display(Node *list)
         list = list->next;
     }
 }
-
+/*
 void display_used_letter(Node *list, SDL_Window *window, SDL_Renderer *renderer)
 {
     //char* char_used_letter = malloc(sizeof(char));
@@ -262,7 +262,7 @@ void display_used_letter(Node *list, SDL_Window *window, SDL_Renderer *renderer)
     }
     printf("%c\n", c);
 }
-
+*/
 void free_list(Node *n)
 {
     while (n)
@@ -276,13 +276,15 @@ void free_list(Node *n)
 
 
 
-void game(SDL_Window *window, SDL_Renderer *renderer, char keyPressed, SDL_bool *inGame, SDL_bool *inMenu){
+void game(SDL_Window *window, SDL_Renderer *renderer, char keyPressed, SDL_bool *inGame, SDL_bool *inMenu,int *played, int *won, int *lose){
+    *played =+ 1;
     FILE* fichier = NULL;
 	srand(time(NULL));
 	char motSecret[15]={0};
 	char motActuel[15]={0};
 	char lettre;
 	int tentative = 7;
+    //tentative = 7;
     char* char_tentative = malloc(sizeof(char));
     SDL_itoa(tentative, char_tentative, 10);
     SDL_Event event;
@@ -298,24 +300,21 @@ void game(SDL_Window *window, SDL_Renderer *renderer, char keyPressed, SDL_bool 
 			list->next = NULL; 
 
 			InitialChaine(motActuel,'*',strlen(motSecret));
-			//printf("Le mot a trouver : %s \nTentatives : %d\n",motActuel,tentative );
             SDL_RenderClear(renderer);
             displayImg(window, renderer, "img/menu-2.png", 0, 0);
             displayTxt(window, renderer,"font/absender1.ttf",TENTATIVE_SIZE, "Tentatives : ", TXT_TENTATIVE_X,TXT_TENTATIVE_Y);
             displayTxt(window, renderer,"font/absender1.ttf",TENTATIVE_SIZE, char_tentative, INT_TENTATIVE_X,INT_TENTATIVE_Y);
             displayTxt(window, renderer,"font/absender1.ttf",WORD_SIZE, motActuel, ACTUAL_WORD_X,ACTUAL_WORD_Y);
             printf("%s\n",motActuel);
-            printf("%s\n",motSecret);
+            printf("%s\n",motSecret);// A SUPPRIMER
             
     do {
-				//printf("Donnez une lettre : \n");
+				//on recupere la lettre proposée
 				lettre = toupper(proposition(inGame, inMenu, tentative));
-                /*if(lettre == '\b'){
-                    printf("QUIT\n");
-                    quit_game(program_launched);
-                }*/
-				printf("%c \n", lettre);
-				//printf("%c \n", lettre);
+                if(tentative == -1){
+                    break;
+                    printf("break\n");
+                }
 				// Si la lettre comprise entre A et Z
 				if ( !(lettre < 'A') || (lettre > 'Z')) {
 					
@@ -324,14 +323,12 @@ void game(SDL_Window *window, SDL_Renderer *renderer, char keyPressed, SDL_bool 
 						
                         // Si la lettre est dans le mot
 						if (LettreUtilise(lettre,motSecret)) {
-						printf("la lettre existe !\n");
                             int i = 0;
                                 
                                 do {
                                     if (CompareChar(lettre,motSecret[i])) motActuel[i] = motSecret[i];
                                     i++;
                                 } while(motSecret[i] != '\0');
-                                //printf("%s\n",motActuel);
                                 
                                 SDL_RenderClear(renderer);
                                 displayImg(window,renderer,"img/menu-2.png",0,0);                     
@@ -341,7 +338,7 @@ void game(SDL_Window *window, SDL_Renderer *renderer, char keyPressed, SDL_bool 
                                 displayPendu(window, renderer, tentative);
 
 						} else {
-							tentative--;
+							tentative-=1;
                             SDL_itoa(tentative, char_tentative, 10);
                             SDL_RenderClear(renderer);
                             displayImg(window,renderer,"img/menu-2.png",0,0);                     
@@ -349,7 +346,6 @@ void game(SDL_Window *window, SDL_Renderer *renderer, char keyPressed, SDL_bool 
                             displayTxt(window, renderer,"font/absender1.ttf",TENTATIVE_SIZE, char_tentative, INT_TENTATIVE_X,INT_TENTATIVE_Y); 
                             displayTxt(window, renderer,"font/absender1.ttf",WORD_SIZE, motActuel, ACTUAL_WORD_X,ACTUAL_WORD_Y);
                             displayPendu(window, renderer, tentative);
-							//printf("La lettre n'est pas dans le mot \nMot a trouver : %s\nTentative restante : %d\n",motActuel,tentative);
                             //Dessiner le pendu
 							add_to_end(list,lettre);
 						}
@@ -357,35 +353,33 @@ void game(SDL_Window *window, SDL_Renderer *renderer, char keyPressed, SDL_bool 
 					} else {
 						displayTxt(window, renderer,"font/absender1.ttf",TENTATIVE_SIZE, "Lettre deja proposee !", TXT_TENTATIVE_X,TXT_TENTATIVE_Y+50);
                         //display(list);
-                        display_used_letter(list, window, renderer);
+                        //display_used_letter(list, window, renderer);
 					}
 
 				} else {
-					//printf("Ce n'est pas une lettre\nMot a trouver : %s\nTentatives restantes : %d\n",motActuel,tentative);
+                    displayTxt(window, renderer,"font/absender1.ttf",TENTATIVE_SIZE, "Lettre non valide !", TXT_TENTATIVE_X,TXT_TENTATIVE_Y+50);
 				}
 
 			}while ((!CompareChaine(motActuel,motSecret)) && (tentative > 0));
 
 			if (tentative == 0) {// Perdu
-                /*SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0xFF);
-                SDL_RenderClear(renderer);
-                displayTxt(window, renderer,"font/absender1.ttf",WORD_SIZE, "Perdu !", ACTUAL_WORD_X,ACTUAL_WORD_Y);
-                displayTxt(window, renderer,"font/absender1.ttf",WORD_SIZE-50, "Le mot etait :", ACTUAL_WORD_X-100,ACTUAL_WORD_Y+110);
-                displayTxt(window, renderer,"font/absender1.ttf",WORD_SIZE, motSecret, ACTUAL_WORD_X,ACTUAL_WORD_Y+200);*/
-                while (playing)
-                {
-                    SDL_WaitEvent(&event);
+            *lose += 1;
                     SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0xFF);
                     SDL_RenderClear(renderer);
                     displayTxt(window, renderer,"font/absender1.ttf",WORD_SIZE, "Perdu !", ACTUAL_WORD_X,ACTUAL_WORD_Y);
                     displayTxt(window, renderer,"font/absender1.ttf",WORD_SIZE-50, "Le mot etait :", ACTUAL_WORD_X-100,ACTUAL_WORD_Y+110);
                     displayTxt(window, renderer,"font/absender1.ttf",WORD_SIZE, motSecret, ACTUAL_WORD_X,ACTUAL_WORD_Y+200);
+                while (playing)
+                {
+                    SDL_WaitEvent(&event);
+                    
                         switch(event.type){
                             case SDL_KEYDOWN: // pour les touches du clavier
                             switch (event.key.keysym.sym)
                             {   case SDLK_ESCAPE:
-                                    printf("escape\n");
                                     playing = SDL_FALSE;
+                                    //free(tentative);
+                                    free(char_tentative);
                                     quit_game(inGame, inMenu);
                                 break;
                                 default:
@@ -398,22 +392,38 @@ void game(SDL_Window *window, SDL_Renderer *renderer, char keyPressed, SDL_bool 
                 }
 			}
 
-			else{// Gagné
+			else{
+                // Gagné
+            if(tentative == -1){
+                playing = SDL_FALSE;
+                //free(tentative);
+                free(char_tentative);
+                quit_game(inGame, inMenu);
+            }else{
+            *won += 1;
+            SDL_SetRenderDrawColor(renderer, 0x00, 0xFF, 0x00, 0xFF);
+            SDL_RenderClear(renderer);
+            displayTxt(window, renderer,"font/absender1.ttf",WORD_SIZE, "Gagne !", ACTUAL_WORD_X,ACTUAL_WORD_Y);
+            displayTxt(window, renderer,"font/absender1.ttf",WORD_SIZE-50, "Le mot etait :", ACTUAL_WORD_X-100,ACTUAL_WORD_Y+110);
+            displayTxt(window, renderer,"font/absender1.ttf",WORD_SIZE, motSecret, ACTUAL_WORD_X,ACTUAL_WORD_Y+200);
+            displayTxt(window, renderer,"font/absender1.ttf",WORD_SIZE-110, "Echap pour quitter ou n'importe quel touche pour relancer", 10,ACTUAL_WORD_Y+400);
+            }
                 while (playing)
                     {
                         SDL_WaitEvent(&event);
-                        SDL_SetRenderDrawColor(renderer, 0x00, 0xFF, 0x00, 0xFF);
-                        SDL_RenderClear(renderer);
-                        displayTxt(window, renderer,"font/absender1.ttf",WORD_SIZE, "Gagne !", ACTUAL_WORD_X,ACTUAL_WORD_Y);
-                        displayTxt(window, renderer,"font/absender1.ttf",WORD_SIZE-50, "Le mot etait :", ACTUAL_WORD_X-100,ACTUAL_WORD_Y+110);
-                        displayTxt(window, renderer,"font/absender1.ttf",WORD_SIZE, motSecret, ACTUAL_WORD_X,ACTUAL_WORD_Y+200);
+                        
+                       
                             switch(event.type){
+                                case SDL_MOUSEMOTION:
+                                break;
                                 case SDL_KEYDOWN: // pour les touches du clavier
                                 switch (event.key.keysym.sym)
                                 {   
                                     case SDLK_ESCAPE:
                                         printf("escape\n");
                                         playing = SDL_FALSE;
+                                        //free(tentative);
+                                        free(char_tentative);
                                         quit_game(inGame, inMenu);
                                     break;
                                     default:
@@ -466,7 +476,6 @@ void addWordMenu(SDL_Window *window, SDL_Renderer *renderer,SDL_bool *addWord,SD
     int MAX_INPUT = 30;
     char* textInput = malloc(sizeof(char)*MAX_INPUT);
     textInput[0] = '\0';
-    int i = 0;
     char* word = malloc(sizeof(char)*MAX_INPUT);
     word[0] = '\0';
     SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
@@ -523,9 +532,6 @@ void addWordMenu(SDL_Window *window, SDL_Renderer *renderer,SDL_bool *addWord,SD
                         free(word);
                     break;
                     default:
-                        /*word[i] = event.key.keysym.sym;
-                        i++;
-                        printf("%s\n",word);*/
                     break;
                 }
 

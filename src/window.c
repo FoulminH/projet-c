@@ -123,7 +123,20 @@ void TTF_DestroyAndExit(SDL_Renderer *renderer, SDL_Window *window , char* messa
 }
 
 
-void menu(SDL_Window *window, SDL_Renderer *renderer, char keyPressed, SDL_bool *program_launched){
+void menu(SDL_Window *window, SDL_Renderer *renderer, char keyPressed, SDL_bool *program_launched, int *played, int *won, int *lose){
+    char* char_played = malloc(sizeof(char));
+    char* char_won = malloc(sizeof(char));
+    char* char_lose = malloc(sizeof(char));
+    SDL_itoa(*played, char_played, 10);
+    SDL_itoa(*won, char_won, 10);
+    SDL_itoa(*lose, char_lose, 10);
     SDL_RenderClear(renderer);
     displayImg(window, renderer, "img/main-menu-2.png", 0, 0);
+    displayTxt(window, renderer, "font/absender1.ttf", 30, "Statistiques :", 10, 100);
+    displayTxt(window, renderer, "font/absender1.ttf", 30, "Parties jouees :", 50, 200);
+    displayTxt(window, renderer, "font/absender1.ttf", 30, char_played, 300, 200);
+    displayTxt(window, renderer, "font/absender1.ttf", 30, "Parties gagnees :", 400, 200);
+    displayTxt(window, renderer, "font/absender1.ttf", 30, char_won, 650, 200);
+    displayTxt(window, renderer, "font/absender1.ttf", 30, "Parties perdues :", 800, 200);
+    displayTxt(window, renderer, "font/absender1.ttf", 30, char_lose, 1050, 200);
 }

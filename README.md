@@ -1,2 +1,2 @@
 # TO DO:
-#       - afficher les lettres utilisées
+#       -ajouter la base de données

@@ -22,7 +22,17 @@ int main(int argc, char *argv[])
     SDL_bool addWord = SDL_FALSE;
     SDL_bool askPseudo = SDL_FALSE;
     SDL_Event event;
-    //int* score = malloc(sizeof(int));
+    int* score = malloc(sizeof(int));
+    *score = 0;
+    ///////////////////////////////////////////// A REMPLACER PAR LES REQUETES SQL /////////////////////////////////////////////
+    int *played = malloc(sizeof(int));
+    *played = 0;
+    int *won = malloc(sizeof(int));
+    *won = 0;
+    int *lose = malloc(sizeof(int));
+    *lose = 0;
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     //lancement SDL
     if(SDL_Init(SDL_INIT_VIDEO) != 0) // Initialisation de la SDL & gestion des erreurs
@@ -44,14 +54,6 @@ int main(int argc, char *argv[])
     askPseudo = SDL_TRUE;                         
     while(program_launched){
         SDL_WaitEvent(&event);
-            if(inMenu){ //si on est dans le menu
-                menu(window->sdl_window, window->renderer,keyPressed,&program_launched);
-            }else if(inGame){ //si on est dans le jeu
-                game(window->sdl_window, window->renderer,keyPressed,&inGame,&inMenu);
-            }else if(addWord){ //si on est dans l'ajout de mot
-                addWordMenu(window->sdl_window, window->renderer,&addWord,&inMenu);
-            }
-            //while(SDL_PollEvent(&event)){
             switch(event.type){
                 //obtenir la position de la souris
                 case SDL_MOUSEMOTION:
@@ -126,7 +128,6 @@ int main(int argc, char *argv[])
                                 printf("pseudo:%s\n", pseudo);
                                 askPseudo = SDL_FALSE;
                                 inMenu = SDL_TRUE;
-                                menu(window->sdl_window, window->renderer,keyPressed,&program_launched);
                             }
                             continue;
                         case SDLK_BACKSPACE: //touche effacer
@@ -162,15 +163,11 @@ int main(int argc, char *argv[])
                                 keyPressed = event.key.keysym.sym;
                                 keyPressed = toupper(keyPressed);
                                 printf("You have pressed %c\n", keyPressed);
-                                //game(window->sdl_window, window->renderer,keyPressed,&inGame, &inMenu);
-
                             }
                             if(inMenu){
                                 printf("in menu\n");
                                 keyPressed = event.key.keysym.sym;
                                 keyPressed = toupper(keyPressed);
-                                //menu(window->sdl_window, window->renderer,keyPressed,&program_launched);
-
                             }
                         continue;
                         }
@@ -180,22 +177,21 @@ int main(int argc, char *argv[])
                     break;
 
                 default:
-                /*
-                if(inGame){
-                    displayImg(window->sdl_window,window->renderer,"img/menu-2.png",0,0); 
-                    displayTxt(window->sdl_window, window->renderer,"font/absender1.ttf",50, "Bienvenue dans le jeu du pendu !", 100,300);
-                    displayTxt(window->sdl_window, window->renderer,"font/absender1.ttf",50, "Appuyez sur une touche pour commencer", 100,350);
-
-                    //displayImg(window->sdl_window,window->renderer,"img/7.jpg",50,50);   
-                    //displayTxt(window->sdl_window,window->renderer,"font/absender1.ttf", 200, "AAAAAAAAAAAA", 100, 50);
-                }
-            */    
+                        if(inMenu){ //si on est dans le menu
+                            menu(window->sdl_window, window->renderer,keyPressed,&program_launched,played,won,lose);
+                        }else if(inGame){ //si on est dans le jeu
+                            game(window->sdl_window, window->renderer,keyPressed,&inGame,&inMenu,played,won,lose);
+                        }else if(addWord){ //si on est dans l'ajout de mot
+                            addWordMenu(window->sdl_window, window->renderer,&addWord,&inMenu);
+                        }
                 break;
             }
             
         }
     //}
-    //free(score);
+    free(played);
+    free(won);
+    free(lose);
     //free(textInput);
     free(pseudo);
     SDL_StopTextInput();

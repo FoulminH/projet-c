@@ -37,4 +37,4 @@ void SDL_ExitWithError(char* message);
 void TTF_ExitWithError(char* message);
 void SDL_DestroyAndExit(SDL_Renderer *renderer, SDL_Window *window , char* message);
 void TTF_DestroyAndExit(SDL_Renderer *renderer, SDL_Window *window , char* message);
-void menu(SDL_Window *window, SDL_Renderer *renderer, char keyPressed, SDL_bool *program_launched);
+void menu(SDL_Window *window, SDL_Renderer *renderer, char keyPressed, SDL_bool *program_launched,int *played, int *won, int *lost);
