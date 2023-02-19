@@ -6,7 +6,7 @@
 //#include "includes/window.h"
 #include "includes/game.h"
 
-int main(int argc, char *argv[])
+int main(int argc, const char *argv[])
 {
     //Initialisation des variables (graphiques)
     Window *window = create_window();

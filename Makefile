@@ -46,3 +46,7 @@ clean:
 .PHONY: run
 run:
 	make && ./build/$(OBJ_NAME)
+
+.PHONY: play
+play:
+	./$(BUILD_DIR)/$(OBJ_NAME)
