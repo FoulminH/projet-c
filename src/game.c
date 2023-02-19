@@ -277,7 +277,7 @@ void free_list(Node *n)
 
 
 void game(SDL_Window *window, SDL_Renderer *renderer, char keyPressed, SDL_bool *inGame, SDL_bool *inMenu,int *played, int *won, int *lose){
-    *played =+ 1;
+    *played += 1;
     FILE* fichier = NULL;
 	srand(time(NULL));
 	char motSecret[15]={0};
@@ -539,5 +539,3 @@ void addWordMenu(SDL_Window *window, SDL_Renderer *renderer,SDL_bool *addWord,SD
     
     }
 }
-
-
