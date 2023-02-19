@@ -114,7 +114,6 @@ int main(int argc, const char *argv[])
                     }
                         strcat(textInput, event.text.text);
                         displayTxt(window->sdl_window, window->renderer,"font/absender1.ttf", 50, textInput, PSEUDO_X, PSEUDO_Y);
-                        printf("text input: %s\n", textInput);
                }
                 break;
                 case SDL_KEYDOWN: // pour les touches du clavier
@@ -159,13 +158,10 @@ int main(int argc, const char *argv[])
                         break;
                         default:
                             if(inGame){
-                                printf("in game\n");
                                 keyPressed = event.key.keysym.sym;
                                 keyPressed = toupper(keyPressed);
-                                printf("You have pressed %c\n", keyPressed);
                             }
                             if(inMenu){
-                                printf("in menu\n");
                                 keyPressed = event.key.keysym.sym;
                                 keyPressed = toupper(keyPressed);
                             }

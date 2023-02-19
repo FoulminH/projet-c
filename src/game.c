@@ -305,15 +305,13 @@ void game(SDL_Window *window, SDL_Renderer *renderer, char keyPressed, SDL_bool 
             displayTxt(window, renderer,"font/absender1.ttf",TENTATIVE_SIZE, "Tentatives : ", TXT_TENTATIVE_X,TXT_TENTATIVE_Y);
             displayTxt(window, renderer,"font/absender1.ttf",TENTATIVE_SIZE, char_tentative, INT_TENTATIVE_X,INT_TENTATIVE_Y);
             displayTxt(window, renderer,"font/absender1.ttf",WORD_SIZE, motActuel, ACTUAL_WORD_X,ACTUAL_WORD_Y);
-            printf("%s\n",motActuel);
-            printf("%s\n",motSecret);// A SUPPRIMER
+            //printf("%s\n",motSecret);// A SUPPRIMER
             
     do {
 				//on recupere la lettre proposée
 				lettre = toupper(proposition(inGame, inMenu, tentative));
                 if(tentative == -1){
                     break;
-                    printf("break\n");
                 }
 				// Si la lettre comprise entre A et Z
 				if ( !(lettre < 'A') || (lettre > 'Z')) {
@@ -352,8 +350,6 @@ void game(SDL_Window *window, SDL_Renderer *renderer, char keyPressed, SDL_bool 
 
 					} else {
 						displayTxt(window, renderer,"font/absender1.ttf",TENTATIVE_SIZE, "Lettre deja proposee !", TXT_TENTATIVE_X,TXT_TENTATIVE_Y+50);
-                        //display(list);
-                        //display_used_letter(list, window, renderer);
 					}
 
 				} else {
@@ -434,10 +430,6 @@ void game(SDL_Window *window, SDL_Renderer *renderer, char keyPressed, SDL_bool 
                                 }
                     
                     }
-                
-
-				//printf("Gagné\n");
-				//printf("Avec encore %d tentative e stock\n",tentative);
 			}
             free_list(list);
 
@@ -493,14 +485,12 @@ void addWordMenu(SDL_Window *window, SDL_Renderer *renderer,SDL_bool *addWord,SD
                         }
                             strcat(textInput, event.text.text);
                             displayTxt(window, renderer,"font/absender1.ttf", 50, textInput, PSEUDO_X, PSEUDO_Y);
-                            printf("text input: %s\n", textInput);
                 
                 break;
                 case SDL_KEYDOWN: // pour les touches du clavier
                 switch (event.key.keysym.sym)
                 {   
                     case SDLK_ESCAPE:
-                        printf("escape\n");
                         adding = SDL_FALSE;
                         *addWord = SDL_FALSE;
                         *inMenu = SDL_TRUE;
@@ -524,7 +514,6 @@ void addWordMenu(SDL_Window *window, SDL_Renderer *renderer,SDL_bool *addWord,SD
                     continue;
                     case SDLK_RETURN:
                         word = textInput;
-                        printf("return\n");
                         adding = SDL_FALSE;
                         *addWord = SDL_FALSE;
                         *inMenu = SDL_TRUE;
